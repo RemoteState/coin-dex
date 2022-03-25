@@ -1,4 +1,4 @@
-# Lightning-POC
+# Coin-Dex
 Web server written in NodeJS and TypeScript and deployed to AWS ECS and ECR
 
 ### Project structure
