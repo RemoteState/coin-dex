@@ -1,0 +1,35 @@
+name: Test build and deploy
+on:
+  pull_request:
+    branches:
+      - dev
+
+env:
+  AWS_REGION: ap-south-1
+  CONTAINER_NAME: warehouse-dev-docker
+  ECS_SERVICE: warehouse-dev-service
+  ECS_CLUSTER: warehouse-dev-cluster
+  AWS_ACCESS_KEY_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v2
+      - name: start docker compose
+        run: docker-compose up -d
+      - name: wait for docker to start
+        run: sleep 30s
+        shell: bash
+      - name: initialize modules
+        run: npm i
+      - name: lint
+        run: npm run ci
+      - name: test
+        run: npm run test
+      - name: build
+        run: npm run build
+      - name: stop docker compose
+        run: docker-compose down
